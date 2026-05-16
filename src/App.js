@@ -13,7 +13,46 @@ const headers = {
   'apikey': SUPABASE_KEY,
   'Authorization': `Bearer ${SUPABASE_KEY}`
 };
+function DataFreshness({ employees }) {
+  if (!employees.length) return null;
+  
+  const latest = new Date(employees[0].ingested_at);
+  const now = new Date();
+  const diffMins = Math.round((now - latest) / (1000 * 60));
+  const diffHours = Math.round(diffMins / 60);
 
+  const freshLabel = diffMins < 60 
+    ? `${diffMins} minutes ago` 
+    : diffHours < 24 
+    ? `${diffHours} hours ago` 
+    : `${Math.round(diffHours / 24)} days ago`;
+
+  const isStale = diffHours > 24;
+
+  return (
+    <div style={{
+      ...freshnessStyles.wrap,
+      backgroundColor: isStale ? '#fdf0ef' : '#f0faf4',
+      borderColor: isStale ? '#c0392b33' : '#27ae6033'
+    }}>
+      <div style={{
+        ...freshnessStyles.dot,
+        backgroundColor: isStale ? '#c0392b' : '#27ae60',
+        boxShadow: `0 0 6px ${isStale ? '#c0392b' : '#27ae60'}`
+      }} />
+      <span style={freshnessStyles.text}>
+        Pipeline last ran: <strong>{freshLabel}</strong> &nbsp;·&nbsp; {employees.length} records loaded
+        {isStale && <span style={freshnessStyles.warning}> — data may be stale, re-run pipeline</span>}
+      </span>
+    </div>
+  );
+}
+const freshnessStyles = {
+  wrap: { display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 48px', border: '0', borderBottom: '1px solid #e5e5e5', fontSize: '12px', color: '#1a1a1a' },
+  dot: { width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0 },
+  text: { letterSpacing: '0.3px' },
+  warning: { color: '#c0392b', fontWeight: '600' }
+};
 function BuroLogo({ light = false }) {
   return (
     <div style={logo.wrap}>
@@ -127,6 +166,7 @@ function App() {
           </button>
         </div>
       </header>
+      <DataFreshness employees={employees} />
       <div style={styles.body}>
         <DataQuality employees={employees} />
         <FTCAlerts alerts={ftcAlerts} />
