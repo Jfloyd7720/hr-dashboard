@@ -4,7 +4,7 @@ const C = {
     border: '#e2e8f0',
     accent: '#c4d600',
     text: '#1a1f2e',
-    muted: '#64748b',
+    muted: '#475569',
     success: '#22c55e',
     warning: '#f59e0b',
     danger: '#ef4444',

@@ -6,7 +6,7 @@ const C = {
     border: '#e2e8f0',
     accent: '#c4d600',
     text: '#1a1f2e',
-    muted: '#64748b',
+    muted: '#475569',
     success: '#22c55e',
     warning: '#f59e0b',
     danger: '#ef4444',
@@ -23,7 +23,7 @@ function Attrition({ leavers, allEmployees }) {
 
   const deptData = Object.entries(groupBy(leavers, 'Discipline')).sort((a, b) => b[1] - a[1]).map(([name, value]) => ({ name, value }));
   const contractData = Object.entries(groupBy(leavers, 'Employment Type')).map(([name, value]) => ({ name, value }));
-  const COLORS = [C.accent, C.text, C.muted];
+  const COLORS = [C.accent, '#1a1f2e', '#94a3b8'];
 
   const CustomTooltip = ({ active, payload }) => {
     if (!active || !payload?.length) return null;
@@ -90,7 +90,7 @@ function groupBy(arr, key) {
 }
 
 const S = {
-  wrap: { marginBottom: '56px' },
+    wrap: { marginBottom: '56px', paddingBottom: '56px', borderBottom: '1px solid #e2e8f0' },
   heading: { fontSize: '11px', letterSpacing: '3px', color: C.text, marginBottom: '4px', fontWeight: '700', textTransform: 'uppercase', fontFamily: C.font },
   bar: { height: '2px', backgroundColor: C.accent, width: '48px', marginBottom: '24px' },
   metrics: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' },

@@ -4,7 +4,7 @@ const C = {
     border: '#e2e8f0',
     accent: '#c4d600',
     text: '#1a1f2e',
-    muted: '#64748b',
+    muted: '#475569',
     success: '#22c55e',
     warning: '#f59e0b',
     danger: '#ef4444',
@@ -32,7 +32,7 @@ function FTCAlerts({ alerts }) {
 }
 
 const S = {
-  wrap: { marginBottom: '56px' },
+    wrap: { marginBottom: '56px', paddingBottom: '56px', borderBottom: '1px solid #e2e8f0' },
   heading: { fontSize: '11px', letterSpacing: '3px', color: C.text, marginBottom: '4px', fontWeight: '700', textTransform: 'uppercase', fontFamily: C.font },
   bar: { height: '2px', backgroundColor: C.accent, width: '48px', marginBottom: '24px' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' },

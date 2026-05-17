@@ -82,12 +82,58 @@ function DataFreshness({ employees }) {
   const now = new Date();
   const diffMins = Math.round((now - latest) / (1000 * 60));
   const diffHours = Math.round(diffMins / 60);
-  const freshLabel = diffMins < 60 ? `${diffMins} minutes ago` : diffHours < 24 ? `${diffHours} hours ago` : `${Math.round(diffHours / 24)} days ago`;
+  const freshLabel = diffMins < 60
+    ? `${diffMins} minute${diffMins === 1 ? '' : 's'} ago`
+    : diffHours < 24
+    ? `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`
+    : `${Math.round(diffHours / 24)} day${Math.round(diffHours / 24) === 1 ? '' : 's'} ago`;
   const isStale = diffHours > 24;
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 48px', backgroundColor: '#f4f5f7', borderBottom: '1px solid #e2e8f0', fontSize: '12px', color: '#64748b', fontFamily: FONT }}>
       <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: isStale ? '#ef4444' : '#22c55e', boxShadow: `0 0 8px ${isStale ? '#ef4444' : '#22c55e'}`, flexShrink: 0 }} />
       <span>Pipeline last ran: <strong style={{ color: DARK }}>{freshLabel}</strong> &nbsp;·&nbsp; {employees.length} records loaded{isStale && <span style={{ color: '#ef4444' }}> — data may be stale</span>}</span>
+    </div>
+  );
+}
+
+function FilterBar({ offices, departments, activeOffice, activeDept, onOffice, onDept }) {
+  const btnStyle = (active) => ({
+    padding: '6px 14px',
+    fontSize: '11px',
+    fontWeight: active ? '700' : '400',
+    fontFamily: FONT,
+    letterSpacing: '1px',
+    cursor: 'pointer',
+    border: `1px solid ${active ? DARK : '#e2e8f0'}`,
+    backgroundColor: active ? DARK : '#ffffff',
+    color: active ? '#ffffff' : '#64748b',
+    borderRadius: '2px',
+    transition: 'all .15s'
+  });
+
+  return (
+    <div style={{ padding: '14px 48px', backgroundColor: '#ffffff', borderBottom: '1px solid #e2e8f0', display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+        <span style={{ fontSize: '10px', color: '#64748b', letterSpacing: '2px', fontFamily: FONT, marginRight: '4px' }}>OFFICE</span>
+        {['All', ...offices].map(o => (
+          <button key={o} style={btnStyle(activeOffice === o)} onClick={() => onOffice(o)}>{o}</button>
+        ))}
+      </div>
+      <div style={{ width: '1px', height: '24px', backgroundColor: '#e2e8f0' }} />
+      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+        <span style={{ fontSize: '10px', color: '#64748b', letterSpacing: '2px', fontFamily: FONT, marginRight: '4px' }}>DEPT</span>
+        {['All', ...departments].map(d => (
+          <button key={d} style={btnStyle(activeDept === d)} onClick={() => onDept(d)}>{d}</button>
+        ))}
+      </div>
+      {(activeOffice !== 'All' || activeDept !== 'All') && (
+        <button
+          onClick={() => { onOffice('All'); onDept('All'); }}
+          style={{ fontSize: '11px', color: '#ef4444', fontFamily: FONT, background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '1px' }}
+        >
+          × CLEAR
+        </button>
+      )}
     </div>
   );
 }
@@ -105,6 +151,8 @@ function App() {
   const [authed, setAuthed] = useState(sessionStorage.getItem('bh_auth') === 'true');
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [officeFilter, setOfficeFilter] = useState('All');
+  const [deptFilter, setDeptFilter] = useState('All');
 
   useEffect(() => {
     if (!authed) return;
@@ -124,9 +172,21 @@ function App() {
     </div>
   );
 
-  const active = employees.filter(e => e.Is_Active);
-  const leavers = employees.filter(e => !e.Is_Active);
-  const ftcAlerts = employees.filter(e => e.FTC_Expiring_Soon);
+  // Get unique offices and departments for filter
+  const offices = [...new Set(employees.map(e => e.Office).filter(Boolean))].sort();
+  const departments = [...new Set(employees.map(e => e.Discipline).filter(Boolean))].sort();
+
+  // Apply filters
+  const filtered = employees.filter(e => {
+    if (officeFilter !== 'All' && e.Office !== officeFilter) return false;
+    if (deptFilter !== 'All' && e.Discipline !== deptFilter) return false;
+    return true;
+  });
+
+  const active = filtered.filter(e => e.Is_Active);
+  const leavers = filtered.filter(e => !e.Is_Active);
+  const ftcAlerts = filtered.filter(e => e.FTC_Expiring_Soon);
+  const isFiltered = officeFilter !== 'All' || deptFilter !== 'All';
 
   return (
     <div style={{ backgroundColor: '#f4f5f7', minHeight: '100vh', fontFamily: FONT, color: DARK }}>
@@ -144,14 +204,31 @@ function App() {
           </button>
         </div>
       </header>
+
       <DataFreshness employees={employees} />
+
+      <FilterBar
+        offices={offices}
+        departments={departments}
+        activeOffice={officeFilter}
+        activeDept={deptFilter}
+        onOffice={setOfficeFilter}
+        onDept={setDeptFilter}
+      />
+
+      {isFiltered && (
+        <div style={{ padding: '10px 48px', backgroundColor: '#fffbeb', borderBottom: '1px solid #fde68a', fontSize: '12px', color: '#92400e', fontFamily: FONT }}>
+          Showing filtered results: {officeFilter !== 'All' ? `Office = ${officeFilter}` : ''}{officeFilter !== 'All' && deptFilter !== 'All' ? ' · ' : ''}{deptFilter !== 'All' ? `Dept = ${deptFilter}` : ''} &nbsp;·&nbsp; {filtered.length} of {employees.length} records
+        </div>
+      )}
+
       <div style={{ padding: '40px 48px' }}>
         <DataQuality employees={employees} />
         <FTCAlerts alerts={ftcAlerts} />
-        <FTCTimeline employees={employees} />
+        <FTCTimeline employees={filtered} />
         <Headcount employees={active} />
-        <Attrition leavers={leavers} allEmployees={employees} />
-        <CostAnalysis employees={employees} />
+        <Attrition leavers={leavers} allEmployees={filtered} />
+        <CostAnalysis employees={filtered} />
       </div>
     </div>
   );

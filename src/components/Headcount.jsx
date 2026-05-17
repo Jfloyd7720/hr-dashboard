@@ -4,7 +4,7 @@ const C = {
     border: '#e2e8f0',
     accent: '#c4d600',
     text: '#1a1f2e',
-    muted: '#64748b',
+    muted: '#475569',
     success: '#22c55e',
     warning: '#f59e0b',
     danger: '#ef4444',
@@ -56,7 +56,7 @@ function groupBy(arr, key) {
 }
 
 const S = {
-  wrap: { marginBottom: '56px' },
+    wrap: { marginBottom: '56px', paddingBottom: '56px', borderBottom: '1px solid #e2e8f0' },
   heading: { fontSize: '11px', letterSpacing: '3px', color: C.text, marginBottom: '4px', fontWeight: '700', textTransform: 'uppercase', fontFamily: C.font },
   bar: { height: '2px', backgroundColor: C.accent, width: '48px', marginBottom: '24px' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' },
@@ -64,7 +64,7 @@ const S = {
   cardTitle: { fontSize: '11px', letterSpacing: '2px', color: C.muted, marginBottom: '20px', fontWeight: '600', textTransform: 'uppercase', fontFamily: C.font },
   row: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' },
   label: { fontSize: '12px', color: C.text, width: '110px', flexShrink: 0, fontFamily: C.font },
-  barWrap: { flex: 1, backgroundColor: C.border, borderRadius: '1px', height: '6px' },
+  barWrap: { flex: 1, backgroundColor: '#d1d5db', borderRadius: '1px', height: '6px' },
   barEl: { height: '6px', backgroundColor: C.accent, borderRadius: '1px' },
   count: { fontSize: '12px', color: C.text, fontWeight: '700', width: '30px', textAlign: 'right', fontFamily: C.font }
 };
