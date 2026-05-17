@@ -1,3 +1,5 @@
+import { useInView } from '../hooks/useInView';
+
 const C = {
     bg: '#f4f5f7',
     card: '#ffffff',
@@ -11,6 +13,7 @@ const C = {
     font: "'Courier New', monospace"
   };
 function DataQuality({ employees }) {
+  const [ref, inView] = useInView();
   const issues = [
     { id: 1, issue: "Inconsistent office names", detail: "LDN and London used interchangeably for the same office", affected: 90, fix: "Standardised all LDN → London", severity: "MEDIUM" },
     { id: 2, issue: "Lowercase first names", detail: "Multiple employees had lowercase 'Known As' values e.g. deborah, mohammed", affected: 12, fix: "Applied title case to all name fields", severity: "LOW" },
@@ -31,7 +34,7 @@ function DataQuality({ employees }) {
   const sBg = (s) => s === 'HIGH' ? '#ef444415' : s === 'MEDIUM' ? '#f59e0b15' : '#22c55e15';
 
   return (
-    <div style={S.wrap}>
+    <div ref={ref} style={{ ...S.wrap, opacity: inView ? 1 : 0, transform: inView ? 'translateY(0)' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
       <h2 style={S.heading}>Data Quality Report</h2>
       <div style={S.bar} />
       <div style={S.summary}>

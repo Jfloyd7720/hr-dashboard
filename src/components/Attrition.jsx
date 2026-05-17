@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from "recharts";
-
+import { useInView } from '../hooks/useInView';
 const C = {
     bg: '#f4f5f7',
     card: '#ffffff',
@@ -14,6 +14,7 @@ const C = {
   };
 
 function Attrition({ leavers, allEmployees }) {
+  const [ref, inView] = useInView();
   const total = allEmployees.length;
   const rate = ((leavers.length / total) * 100).toFixed(1);
   const avgTenure = leavers.reduce((sum, e) => {
@@ -36,7 +37,7 @@ function Attrition({ leavers, allEmployees }) {
   };
 
   return (
-    <div style={S.wrap}>
+    <div ref={ref} style={{ ...S.wrap, opacity: inView ? 1 : 0, transform: inView ? 'translateY(0)' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
       <h2 style={S.heading}>Attrition Analysis</h2>
       <div style={S.bar} />
       <div style={S.metrics}>

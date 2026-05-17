@@ -5,6 +5,8 @@ import FTCAlerts from "./components/FTCAlerts";
 import CostAnalysis from "./components/CostAnalysis";
 import DataQuality from "./components/DataQuality";
 import FTCTimeline from "./components/FTCTimeline";
+import './App.css';
+import { useCountUp } from './hooks/useCountUp';
 
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
 const SUPABASE_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
@@ -137,11 +139,13 @@ function FilterBar({ offices, departments, activeOffice, activeDept, onOffice, o
     </div>
   );
 }
-
 function Stat({ label, value, highlight }) {
+  const count = useCountUp(typeof value === 'number' ? value : 0);
   return (
-    <div style={{ textAlign: 'center', padding: '14px 28px', backgroundColor: 'rgba(255,255,255,0.08)', border: `1px solid ${highlight ? ACCENT : 'rgba(255,255,255,0.15)'}`, borderRadius: '2px', minWidth: '100px' }}>
-      <div style={{ fontSize: '30px', fontWeight: '800', color: highlight ? ACCENT : '#ffffff', fontFamily: FONT }}>{value}</div>
+    <div style={{ textAlign: 'center', padding: '14px 28px', backgroundColor: 'rgba(255,255,255,0.08)', border: `1px solid ${highlight ? ACCENT : 'rgba(255,255,255,0.15)'}`, borderRadius: '2px', minWidth: '100px', transition: 'all .3s' }}>
+      <div style={{ fontSize: '30px', fontWeight: '800', color: highlight ? ACCENT : '#ffffff', fontFamily: FONT }}>
+        {typeof value === 'number' ? count : value}
+      </div>
       <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', letterSpacing: '2px', marginTop: '4px', textTransform: 'uppercase', fontFamily: FONT }}>{label}</div>
     </div>
   );

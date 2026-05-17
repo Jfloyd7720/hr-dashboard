@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useInView } from '../hooks/useInView';
+
+
 const C = {
     bg: '#f4f5f7',
     card: '#ffffff',
@@ -13,6 +16,7 @@ const C = {
   };
 
 function FTCTimeline({ employees }) {
+  const [ref, inView] = useInView();  
   const today = new Date();
   const months = Array.from({ length: 12 }, (_, i) => {
     const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
@@ -31,7 +35,7 @@ function FTCTimeline({ employees }) {
   const [hovered, setHovered] = useState(null);
 
   return (
-    <div style={S.wrap}>
+    <div ref={ref} style={{ ...S.wrap, opacity: inView ? 1 : 0, transform: inView ? 'translateY(0)' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
       <h2 style={S.heading}>FTC Contract Expiry Timeline</h2>
       <div style={S.bar} />
       <p style={S.desc}>Active FTC contracts expiring over the next 12 months — forward planning view for HR and resourcing teams.</p>

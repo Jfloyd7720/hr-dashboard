@@ -1,3 +1,4 @@
+import { useInView } from '../hooks/useInView';
 const C = {
     bg: '#f4f5f7',
     card: '#ffffff',
@@ -11,6 +12,7 @@ const C = {
     font: "'Courier New', monospace"
   };
 function CostAnalysis({ employees }) {
+  const [ref, inView] = useInView();  
   const active = employees.filter(e => e.Is_Active);
   const byCostCentre = active.reduce((acc, e) => {
     const cc = e['Cost Centre Text'] || 'Unknown';
@@ -30,7 +32,7 @@ function CostAnalysis({ employees }) {
   const riskBg = (s) => s === 'HIGH' ? '#ef444415' : s === 'MEDIUM' ? '#f59e0b15' : '#22c55e15';
 
   return (
-    <div style={S.wrap}>
+    <div ref={ref} style={{ ...S.wrap, opacity: inView ? 1 : 0, transform: inView ? 'translateY(0)' : 'translateY(20px)', transition: 'all 0.6s ease' }}>
       <h2 style={S.heading}>Cost Centre & People Cost Allocation</h2>
       <div style={S.bar} />
       <div style={S.tableWrap}>
